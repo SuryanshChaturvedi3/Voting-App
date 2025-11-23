@@ -1,0 +1,51 @@
+<div class="container mt-5">
+
+    <h2 class="fw-bold text-center mb-4 text-warning">Edit Candidate ✏️</h2>
+
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 600px; border-radius: 20px;">
+         
+
+
+
+
+        <!-- Edit Candidate Form -->
+        <form action="/candidate/<%= candidate._id %>?_method=PUT" method="POST">
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Candidate Name</label>
+                <input type="text" name="name" value="<%= candidate.name %>" class="form-control p-2" required>
+            </div>
+
+            <!-- Party -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Party</label>
+                <input type="text" name="party" value="<%= candidate.party %>" class="form-control p-2" required>
+            </div>
+
+            <!-- Age -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Age</label>
+                <input type="number" name="age" value="<%= candidate.age %>" class="form-control p-2" required>
+            </div>
+
+            <!-- Gender -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Gender</label>
+                <input type="text" name="gender" value="<%= candidate.gender %>" class="form-control p-2" required>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Description</label>
+                <textarea name="description" rows="3" class="form-control p-2"><%= candidate.description %></textarea>
+            </div>
+
+            <button class="btn btn-warning w-100 py-2 rounded-pill fw-bold">Update Candidate</button>
+        </form>
+
+        <a href="/admin/candidateList" class="btn btn-outline-dark mt-3 w-100 rounded-pill">Back to Candidate List</a>
+
+    </div>
+
+</div>

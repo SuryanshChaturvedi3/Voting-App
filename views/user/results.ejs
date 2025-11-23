@@ -1,0 +1,94 @@
+<div class="container mt-5">
+
+    <h2 class="fw-bold text-center mb-4">Live Election Results 📊</h2>
+
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 900px; border-radius: 15px;">
+        <h4 class="fw-bold mb-3 text-center">Vote Distribution</h4>
+
+        <!-- Chart Canvas (fixed area) -->
+        <div style="height:400px; max-width:700px; margin:0 auto;">
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <hr class="my-4">
+
+        <h4 class="fw-bold text-center mt-3">Detailed Results</h4>
+
+        <ul class="list-group mt-3">
+            <% candidates.forEach(c => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong><%= c.name %> (<%= c.party %>)</strong>
+                    <span class="badge bg-primary rounded-pill fs-2">
+                        <%= c.voteCount %> Votes
+                    </span>
+                </li>
+            <% }) %>
+        </ul>
+<% if (user && user.role.toLowerCase().trim() === 'admin') { %>
+    <a href="/admin/dashboard" class="btn btn-secondary w-100 py-2 rounded-pill">Back</a>
+<% } else { %>
+    <a href="/profile" class="btn btn-secondary w-100 py-2 rounded-pill">Back to Dashboard</a>
+<% } %>
+
+
+
+    </div>
+
+</div>
+
+<!-- Chart.js (single import) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+    // Labels and votes embedded from server
+    const labels = JSON.parse('<%- JSON.stringify(candidates.map(c => c.name)) %>');
+    const votesRaw = JSON.parse('<%- JSON.stringify(candidates.map(c => c.voteCount)) %>');
+
+    // Ensure numeric values and replace invalid values with 0
+    const votes = votesRaw.map(v => {
+        const n = Number(v);
+        return Number.isFinite(n) ? n : 0;
+    });
+
+    // Get canvas context safely
+    const canvas = document.getElementById('barChart');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: votes,
+                    borderWidth: 2,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    } else {
+        console.warn('Chart canvas not found: #barChart');
+    }
+</script>

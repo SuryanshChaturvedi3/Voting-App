@@ -1,0 +1,50 @@
+<div class="container mt-5">
+
+    <h2 class="fw-bold text-center mb-4 text-danger">Admin Dashboard 🔐</h2>
+
+    <div class="row g-4" >
+
+        <!-- Add Candidate -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-4 text-center rounded-4">
+                <h4 class="fw-bold">Add Candidate</h4>
+                <p class="text-muted">Register a new election candidate.</p>
+                <a href="/admin/addCandidates" class="btn btn-primary w-100">Add Candidate</a>
+            </div>
+        </div>
+
+        <!-- View Candidates -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-4 text-center rounded-4">
+                <h4 class="fw-bold">View Candidates</h4>
+                <p class="text-muted">See all registered candidates.</p>
+                <a href="/candidateList" class="btn btn-secondary w-100">View List</a>
+            </div>
+        </div>
+
+        <!-- View Voters -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-4 text-center rounded-4">
+                <h4 class="fw-bold">Voters</h4>
+                <p class="text-muted">Check all registered voters.</p>
+                <a href="/admin/voterList" class="btn btn-success w-100">View Voters</a>
+            </div>
+        </div>
+
+
+        <!-- View Votes / Results -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-4 text-center rounded-4">
+                <h4 class="fw-bold">View Votes</h4>
+                <p class="text-muted">Check live vote counts and results.</p>
+                <a href="/results" class="btn btn-dark w-100">View Votes</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="/logout" class="btn btn-outline-danger px-4 py-2 rounded-pill">Logout</a>
+    </div>
+
+</div>

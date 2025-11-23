@@ -1,0 +1,29 @@
+<div class="container mt-5">
+
+    <h2 class="fw-bold mb-4 text-center">Your Profile 👤</h2>
+
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 600px; border-radius: 15px;">
+
+        <h4 class="fw-bold">Personal Information</h4>
+        <hr>
+
+        <p><strong>Name:</strong> <%= user.name %></p>
+
+        <p><strong>Aadhar Number/Voter ID:</strong> <%= user.aadharCard %></p>
+        <p><strong>Gender:</strong> <%= user.gender %></p>
+
+        <% if (user.age) { %>
+            <p><strong>Age:</strong> <%= user.age %></p>
+        <% } %>
+
+        <% if (user.address) { %>
+            <p><strong>Address:</strong> <%= user.address %></p>
+        <% } %>
+
+        <hr>
+
+        <a href="/profile" class="btn btn-secondary w-100 py-2 rounded-pill">
+            Back to Dashboard
+        </a>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+<h2 class="text-center mb-4 fw-bold">Create Your Account</h2>
+
+<form action="/user/signup" method="POST" class="mx-auto" style="max-width: 450px;">
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Full Name</label>
+        <input class="form-control" name="name" placeholder="Enter full name" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Age</label>
+        <input class="form-control" name="age" type="number" placeholder="Enter your age" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Gender</label>
+        <select class="form-control" name="gender" required>
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Email</label>
+        <input class="form-control" name="email" type="email" placeholder="Enter your email" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Mobile Number</label>
+        <input class="form-control" name="mobile" type="number" placeholder="Enter your mobile number" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Address</label>
+        <input class="form-control" name="address" placeholder="Enter your address" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Aadhar Number</label>
+        <input class="form-control" name="aadharCard" placeholder="Enter Aadhar Number" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Password</label>
+        <input class="form-control" name="password" type="password" placeholder="Create password" required>
+    </div>
+
+    <!-- ⭐ ROLE DROPDOWN (Very Important) -->
+    <div class="mb-3">
+        <label class="form-label fw-bold">Register As</label>
+        <select class="form-control" name="role" required>
+            <option value="">Select Role</option>
+            <option value="voter">Voter</option>
+            <option value="admin">Admin</option>
+        </select>
+    </div>
+
+    <button class="btn btn-primary btn-custom w-100 mt-2">Signup</button>
+
+    <p class="text-center mt-3">
+        Already have an account?
+        <a href="/login" class="text-decoration-none fw-bold">Login here</a>
+    </p>
+</form>
+
+<% if (typeof error !== 'undefined') { %>
+    <div class="alert alert-danger mt-3 text-center"><%= error %></div>
+<% } %>
+<% if (typeof success !== 'undefined') { %>
+    <div class="alert alert-success mt-3 text-center"><%= success %></div>
+<% } %>

@@ -1,0 +1,56 @@
+<div class="container mt-5">
+
+    <h2 class="fw-bold text-center mb-4 text-primary">Add New Candidate 🗳️</h2>
+
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 600px; border-radius: 20px;">
+
+        <form action="/candidate" method="POST">
+        
+    <% if (message) { %>
+    <div class="alert alert-success text-center"><%= message %></div>
+<% } %>
+            <!-- Candidate Name -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Candidate Name</label>
+                <input type="text" name="name" class="form-control p-2" placeholder="Enter full name" required>
+            </div>
+
+            <!-- Party -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Party</label>
+                <input type="text" name="party" class="form-control p-2" placeholder="Enter party name" required>
+            </div>
+
+            <!-- Age -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Age</label>
+                <input type="number" name="age" class="form-control p-2" placeholder="Enter age" required>
+            </div>
+            <!-- Age -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Gender</label>
+                <input type="text" name="gender" class="form-control p-2" placeholder="Enter gender" required>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Description</label>
+                <textarea name="description" class="form-control p-2" rows="3" placeholder="Write about the candidate"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="btn btn-primary w-100 py-2 rounded-pill">
+                Add Candidate
+            </button>
+        
+
+
+        </form>
+
+        <a href="/admin/dashboard" class="btn btn-outline-dark mt-3 w-100 rounded-pill">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>

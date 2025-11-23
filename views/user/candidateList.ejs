@@ -1,0 +1,57 @@
+<h2 class="text-center fw-bold mb-4">Choose Your Leader</h2>
+
+<div class="row">
+
+    <% candidates.forEach(c => { %>
+    <div class="col-md-4 mb-4">
+
+        <div class="card shadow-lg p-3 rounded-4">
+
+            <h4 class="fw-bold text-center"><%= c.name %></h4>
+            <p class="text-muted text-center">Party: <%= c.party %></p>
+
+            <hr>
+
+<!-- ADMIN CONTROLS -->
+<% if (role && role.toLowerCase().trim() === "admin") { %>
+
+<a href="/admin/editCandidate/<%= c._id %>" class="btn btn-warning w-100">Edit</a>
+    <a href="/candidate/deleteCandidate/<%= c._id %>" class="btn btn-danger w-100">Delete</a>
+    
+
+
+<% } else { %>
+
+    <!-- USER CONTROLS -->
+    <% if (user.isVoted) { %>
+
+        <button class="btn btn-secondary w-100" disabled>
+            Already Voted
+        </button>
+
+    <% } else { %>
+
+        <form action="/candidate/vote/<%= c._id %>" method="POST">
+            <button class="btn btn-success w-100">
+                Vote for <%= c.name %>
+            </button>
+        </form>
+
+    <% } %>
+
+<% } %>
+        </div>
+
+    </div>
+    <% }) %>
+
+<% if (role && role.toLowerCase().trim() === "admin") { %>
+    <a href="/admin/dashboard" class="btn btn-outline-dark mt-4 w-100 rounded-pill">
+        Back to Dashboard
+    </a>
+<% } else { %>
+    <a href="/profile" class="btn btn-outline-dark mt-4 w-100 rounded-pill">
+        Back to Profile
+    </a>
+<% } %>
+</div>
