@@ -6,7 +6,7 @@ const { generateToken, jwtAuthMiddleware } = require('../jwt');
 
 // Post route to sign up a new user
 
-/*----------User Signup Route----------*/
+/*----------User signup Route----------*/
 router.post('/signup', async (req, res) => {
     try {
         const data = req.body;// ye req.body me user ka data milega jo frontend se user bhjega

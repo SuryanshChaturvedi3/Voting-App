@@ -19,9 +19,9 @@ router.get("/login", (req, res) => {
     res.render("user/login", { title: "Login" });
 });
 
-// SIGNUP PAGE
+// signup PAGE
 router.get("/signup", (req, res) => {
-   return res.render('user/signup', { title: "Signup" });
+   return res.render('user/signup', { title: "signup" });
 });
 
 // DASHBOARD User
@@ -88,13 +88,13 @@ router.get("/admin/dashboard", jwtAuthMiddleware, async (req, res) => {
 });
 
 // ADD CANDIDATE PAGE
-router.get("/admin/addCandidates", jwtAuthMiddleware, async (req, res) => {
+router.get("/admin/addcandidates", jwtAuthMiddleware, async (req, res) => {
     const user = await User.findById(req.user.userId);
     if (user.role !== "admin") {
     return res.status(403).send("Access Denied");
 }
 
-    res.render("admin/addCandidates", { title: "Add Candidate", user,message:null });
+    res.render("admin/addcandidates", { title: "Add Candidate", user,message:null });
 });
 
 

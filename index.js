@@ -11,7 +11,7 @@ const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser'); 
 
 const PORT = process.env.PORT;
-
+console.log(process.env.MONGODB_URI);
 
 /*--------Database Connection Setup--------*/
 mongoose

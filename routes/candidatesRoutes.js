@@ -27,7 +27,7 @@ router.post('/', jwtAuthMiddleware,async (req, res) => {
         const newCandidate = new Candidate(data);
        const response =  await newCandidate.save(); // ye user ko database me save karega
         console.log('data saved successfully');  
-           return res.render("admin/addCandidates", { title: "Add Candidate", message: "Candidate added successfully" ,response});
+           return res.render("admin/addcandidates", { title: "Add Candidate", message: "Candidate added successfully" ,response});
             
     } 
     catch (err) {
