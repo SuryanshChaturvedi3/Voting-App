@@ -52,4 +52,4 @@ app.use('/candidate' ,candidateRoutes); // Use candidate routes for any requests
 /*---Start the Server---*/
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-});
+}); 
