@@ -10,12 +10,12 @@ const methodOverride = require("method-override");
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser'); 
 
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 
 /*--------Database Connection Setup--------*/
 mongoose
-       .connect('mongodb://127.0.0.1:27017/votingApp')
+       .connect(process.env.MONGODB_URI)
        .then(() => console.log(' MongoDB Connected '))
        .catch((err) => console.error('Error connecting to MongoDB:', err));
 
