@@ -37,12 +37,12 @@ router.get("/userdata", jwtAuthMiddleware, async (req, res) => {
 });
 
 // Show Candidate List Page
-router.get("/candidateList", jwtAuthMiddleware, async (req, res) => {
+router.get("/candidatelist", jwtAuthMiddleware, async (req, res) => {
     const user = await User.findById(req.user.userId);
     const role = req.user.role;               // from JWT
     const candidates = await Candidate.find(); // IMPORTANT
 
-    res.render("user/candidateList", { 
+    res.render("user/candidatelist", { 
         user, 
         candidates,
         role,
@@ -99,7 +99,7 @@ router.get("/admin/addcandidates", jwtAuthMiddleware, async (req, res) => {
 
 
 /*----get all users(voters)----*/
-router.get("/admin/voterList", jwtAuthMiddleware, async (req, res) => {
+router.get("/admin/voterlist", jwtAuthMiddleware, async (req, res) => {
     const loggedInUser = await User.findById(req.user.userId);//ye isliye use kia hai kyu k hum req.user me sirf id rakhte hai
 
     if (!loggedInUser || loggedInUser.role !== "admin") {
@@ -108,7 +108,7 @@ router.get("/admin/voterList", jwtAuthMiddleware, async (req, res) => {
 
     const voters = await User.find();
 
-    res.render("admin/voterList", {
+    res.render("admin/voterlist", {
         title: "Voters List",
         voters,
         message: "List of all users"
@@ -117,7 +117,7 @@ router.get("/admin/voterList", jwtAuthMiddleware, async (req, res) => {
 
 
 //EDIT CANDIDATE PAGE
-router.get("/admin/editCandidate/:id", jwtAuthMiddleware, async (req, res) => {
+router.get("/admin/editcandidate/:id", jwtAuthMiddleware, async (req, res) => {
     console.log("data");
     const user = await User.findById(req.user.userId);
     if (user.role !== "admin") {
@@ -128,7 +128,7 @@ router.get("/admin/editCandidate/:id", jwtAuthMiddleware, async (req, res) => {
     if (!candidate) {
         return res.status(404).send("Candidate not found");
     }
-    res.render("admin/editCandidate", { candidate, title: "Edit Candidate", user});
+    res.render("admin/editcandidate", { candidate, title: "Edit Candidate", user});
 });
 
 

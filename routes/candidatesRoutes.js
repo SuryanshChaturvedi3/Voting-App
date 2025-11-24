@@ -63,7 +63,7 @@ router.put('/:candidateId', jwtAuthMiddleware, async (req, res) => {
  const candidates = await Candidate.find();
     const role = req.user.role;               // from JWT
 
-        return res.render("user/candidateList", {
+        return res.render("user/candidatelist", {
             title: "Candidate List",
             message: "Candidate updated successfully",
             candidates,
@@ -93,7 +93,7 @@ router.get('/deleteCandidate/:candidateId',jwtAuthMiddleware, async (req, res) =
             return res.status(404).json({ message: 'Candidate not found' });
         }
         console.log('data deleted');
-res.render("user/candidateList", {
+res.render("user/candidatelist", {
     title: "Candidate List",
     candidates,
     role,
@@ -172,10 +172,10 @@ router.get("/vote/counts",  async(req,res)=>{
 });
 
 /*-----------------Get All Candidates-----------------*/
-// router.get("/candidateList", async(req,res)=>{
+// router.get("/candidatelist", async(req,res)=>{
 //     const candidates = await Candidate.find();
 //    // console.log(candidate);
-//      res.render("user/candidateList", { title: "Candidates", user, candidates });
+//      res.render("user/candidatelist", { title: "Candidates", user, candidates });
 // });
 
 
