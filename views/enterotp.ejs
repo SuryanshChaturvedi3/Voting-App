@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter OTP</title>
+</head>
+<body>
+
+    <h2>Verify OTP</h2>
+
+    <form action="/user/verify-otp" method="POST">
+        <!-- Hidden userId passed from backend -->
+        <input type="hidden" name="userId" value="<%= userId %>">
+
+        <label>Enter OTP:</label>
+        <input type="text" name="otp" placeholder="6-digit OTP" required>
+
+        <button type="submit">Verify</button>
+    </form>
+
+</body>
+</html>

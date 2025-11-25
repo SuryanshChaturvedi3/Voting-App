@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const Candidate = require("../models/candidate");
+const Election = require("../models/election");
 const { jwtAuthMiddleware } = require("../jwt");
 
 
@@ -52,15 +53,46 @@ router.get("/candidatelist", jwtAuthMiddleware, async (req, res) => {
 });
 
 //Live Results Page
-router.get("/results", jwtAuthMiddleware, async (req, res) => {
-        const user = await User.findById(req.user.userId);
+// router.get("/results", jwtAuthMiddleware, async (req, res) => {
+//         const user = await User.findById(req.user.userId);
 
-    const candidates = await Candidate.find().sort({ voteCount: -1 });
-res.render("user/results", {
-    candidates,
-    user,       // <-- required
-    title: "Results"
-});});
+//     const candidates = await Candidate.find().sort({ voteCount: -1 });
+// res.render("user/results", {
+//     candidates,
+//     user,       // <-- required
+//     title: "Results"
+// });});
+router.get("/results", async (req, res) => {
+  try {
+    // 1. Find election timing (if you added timing logic)
+    const election = await Election.findOne();
+
+    const now = new Date();
+
+    if (!election) {
+      return res.send("election timings not set by admin");
+    }
+
+    // 2. Allow results only after election ends
+    if (now < election.endTime) {
+      return res.send("Results will be declared after the election ends.");
+    }
+
+    // 3. Fetch candidates sorted by highest votes
+    const candidates = await Candidate.find().sort({ votes: -1 });
+
+    // 4. Render the results page with candidates
+    res.render("user/results", { 
+      candidates: candidates,
+      winner: candidates[0],   // Top voted candidate
+      title: "election Results"
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.send("Something went wrong");
+  }
+});
 
 
 
@@ -141,9 +173,33 @@ router.get("/logout", (req, res) => {
 
 /*-------------------forgot password page------------------*/
 router.get("/forgot", (req, res) => {
-    
     res.render("forgot", { title: "Forgot Password" });
 });
+
+
+
+
+router.get("/admin/setelection",jwtAuthMiddleware, async (req, res) => {
+      console.log("🔥 Route Hit: /admin/setelection");   // <--- add this
+
+      const user = await User.findById(req.user.userId);
+
+  if (user.role !== "admin") {
+    return res.status(403).send("Access Denied");
+  }
+
+  res.render("admin/setelection", { title: "Set Election Time" });
+});
+
+router.post("/admin/setelection",jwtAuthMiddleware, async (req, res) => {
+  const { startTime, endTime } = req.body;
+console.log("Time receive");
+  await Election.deleteMany();
+  await Election.create({ startTime, endTime });
+
+  res.send("Election time set successfully!");
+});
+
 
 
 module.exports = router;

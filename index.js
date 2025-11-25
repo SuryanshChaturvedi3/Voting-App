@@ -8,14 +8,14 @@ const candidateRoutes = require('./routes/candidatesRoutes');
 require('dotenv').config();
 const methodOverride = require("method-override");
 const expressLayouts = require('express-ejs-layouts');
-const cookieParser = require('cookie-parser'); 
+const cookieParser = require('cookie-parser')
 
 const PORT = process.env.PORT;
-console.log(process.env.MONGODB_URI);
+console.log(process.env.MONGO_URI);
 
 /*--------Database Connection Setup--------*/
 mongoose
-       .connect(process.env.MONGODB_URI)
+       .connect(process.env.MONGO_URI)
        .then(() => console.log(' MongoDB Connected '))
        .catch((err) => console.error('Error connecting to MongoDB:', err));
 

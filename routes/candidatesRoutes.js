@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');        // For checking admin
 const Candidate = require('../models/candidate');  // Candidate model
+const Election = require("../models/election");
+
 const {  jwtAuthMiddleware } = require('../jwt');
 
 
@@ -108,6 +110,20 @@ res.render("user/candidatelist", {
 /*-------Its Voting Day?---------*/
 router.post('/vote/:candidateId', jwtAuthMiddleware,async (req, res) => {
     try {
+     const electiondata = await Election.findOne();
+
+  const now = new Date();
+
+  if (!electiondata) return res.send("election timing not set!");
+
+  if (now < electiondata.startTime)
+    return res.send("election has not started yet!");
+
+  if (now > electiondata.endTime)
+    return res.send("election has ended. You cannot vote now.");
+
+  // continue with vote logic
+
         const candidateId = req.params.candidateId;
         const userId = req.user.userId;
 
@@ -170,6 +186,16 @@ router.get("/vote/counts",  async(req,res)=>{
  }
     
 });
+/*-----------------Set election Time-----------------*/
+router.post("/admin/setelection", async (req, res) => {
+  const { startTime, endTime } = req.body;
+
+  await Election.deleteMany(); // keep only latest
+  await Election.create({ startTime, endTime });
+
+  res.send("election time set successfully!");
+});
+
 
 /*-----------------Get All Candidates-----------------*/
 // router.get("/candidatelist", async(req,res)=>{
@@ -177,6 +203,9 @@ router.get("/vote/counts",  async(req,res)=>{
 //    // console.log(candidate);
 //      res.render("user/candidatelist", { title: "Candidates", user, candidates });
 // });
+
+/*-----------final result page after election ends----------------*/
+
 
 
 module.exports = router;

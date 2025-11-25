@@ -1,0 +1,20 @@
+<div class="container py-5">
+  <h2 class="mb-4">Set Election Time</h2>
+
+  <form action="/admin/setelection" method="POST" class="border p-4 admorounded shadow">
+
+      <div class="mb-3">
+        <label class="form-label">Start Time</label>
+        <input type="datetime-local" name="startTime" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">End Time</label>
+        <input type="datetime-local" name="endTime" class="form-control" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">
+        Save Election Time
+      </button>
+  </form>
+</div>
