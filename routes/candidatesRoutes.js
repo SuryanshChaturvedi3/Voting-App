@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');        // For checking admin
-const Candidate = require('../models/candidate');  // Candidate model
+const User = require('../models/user');
+const Candidate = require('../models/candidate');
 const Election = require("../models/election");
+const { jwtAuthMiddleware } = require('../jwt');
 
-const {  jwtAuthMiddleware } = require('../jwt');
 
-
-/*-------Check Admin---------*/
-const checkAdminRole = async(userId) => {
+/*-------- Check Admin Role (ye check karega ki user admin hai ya nahi) --------*/
+const checkAdminRole = async (userId) => {
     try {
         const user = await User.findById(userId);
         return user.role === 'admin';
@@ -16,54 +15,57 @@ const checkAdminRole = async(userId) => {
         return false;
     }
 };
-/*----------Create new Candidate----------*/
-router.post('/', jwtAuthMiddleware,async (req, res) => {
-    try {
-        if(!await checkAdminRole(req.user.userId)){
-            return  res.status(403).json({ message: 'Access denied. Admins only.' });
-        }
-     
 
-        /*create new user-*/
-        const data = req.body;
-        const newCandidate = new Candidate(data);
-       const response =  await newCandidate.save(); // ye user ko database me save karega
-        console.log('data saved successfully');  
-           return res.render("admin/addcandidates", { title: "Add Candidate", message: "Candidate added successfully" ,response});
-            
-    } 
-    catch (err) {
-        console.log('Error during user signup:', err);
+
+/*-------- Create New Candidate (sirf admin add kar sakta hai) --------*/
+router.post('/', jwtAuthMiddleware, async (req, res) => {
+    try {
+        if (!await checkAdminRole(req.user.userId)) {
+            return res.status(403).json({ message: 'Access denied. Admins only.' });
+        }
+
+        /*-------- ye req.body me jo data aaya hai, usse new candidate banega --------*/
+        const newCandidate = new Candidate(req.body);
+        const response = await newCandidate.save();   /*-------- ye DB me candidate save karega --------*/
+
+        return res.render("admin/addcandidates", {
+            title: "Add Candidate",
+            message: "Candidate added successfully",
+            response
+        });
+
+    } catch (err) {
+        console.log('Error while adding candidate:', err);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
 
-/*--------Candidate Update Route--------*/
+/*-------- Update Candidate (admin candidate details update karega) --------*/
 router.put('/:candidateId', jwtAuthMiddleware, async (req, res) => {
     try {
-                if(!await checkAdminRole(req.user.userId)){
-            return  res.status(403).json({ message: 'Access denied. Admins only.' });
-           
-
+        if (!await checkAdminRole(req.user.userId)) {
+            return res.status(403).json({ message: 'Access denied. Admins only.' });
         }
 
-       const candidateId = req.params.candidateId;// ye user ka ID hai
-        const updatedCandidateData = req.body; // ye req.body me updated data milega
+        const candidateId = req.params.candidateId;  /*-------- ye candidate ki ID hai --------*/
+        const updatedCandidateData = req.body;       /*-------- ye req.body me updated data milega --------*/
 
-        // Find candidate by ID and update
-        const response = await Candidate.findByIdAndUpdate(candidateId, updatedCandidateData,
-             {
-                 new: true, // Return the updated document and automatically save in database
-                 runValidators: true // Ensure updated data adheres to schema
-             });
+        /*-------- ye function candidate ko update karega --------*/
+        const response = await Candidate.findByIdAndUpdate(
+            candidateId,
+            updatedCandidateData,
+            { new: true, runValidators: true }
+        );
 
         if (!response) {
-            return res.status(404).json({ message: 'Candidate not found'});
+            return res.status(404).json({ message: 'Candidate not found' });
         }
-        console.log("Data updated");
- const candidates = await Candidate.find();
-    const role = req.user.role;               // from JWT
+
+        console.log("Candidate updated");
+
+        const candidates = await Candidate.find();   /*-------- ye updated list fetch karega --------*/
+        const role = req.user.role;
 
         return res.render("user/candidatelist", {
             title: "Candidate List",
@@ -71,141 +73,119 @@ router.put('/:candidateId', jwtAuthMiddleware, async (req, res) => {
             candidates,
             role
         });
-     } catch (err) {
+
+    } catch (err) {
+        console.log("Update Error:", err);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
 
-/*--------Candidate Delete Route--------*/
-router.get('/deleteCandidate/:candidateId',jwtAuthMiddleware, async (req, res) => {
+/*-------- Delete Candidate (admin candidate ko delete karega) --------*/
+router.get('/deleteCandidate/:candidateId', jwtAuthMiddleware, async (req, res) => {
     try {
-                if(!await checkAdminRole(req.user.userId)){
-            return  res.status(403).json({ message: 'Access denied. Admins only.' });
+        if (!await checkAdminRole(req.user.userId)) {
+            return res.status(403).json({ message: 'Access denied. Admins only.' });
         }
 
-       const candidateId = req.params.candidateId;// ye user ka ID hai
-        //const updatedCandidateData = req.body; // ye req.body me updated data milega
+        const candidateId = req.params.candidateId;  /*-------- ye candidate ki ID hai --------*/
 
-        // Find candidate by ID and update
+        /*-------- ye candidate ko database se delete karega --------*/
         const response = await Candidate.findByIdAndDelete(candidateId);
-          const candidates = await Candidate.find();
-       const role = req.user.role;               // from JWT
+
         if (!response) {
             return res.status(404).json({ message: 'Candidate not found' });
         }
-        console.log('data deleted');
-res.render("user/candidatelist", {
-    title: "Candidate List",
-    candidates,
-    role,
-    
-});    }
-     catch (err) {
+
+        const candidates = await Candidate.find();
+        const role = req.user.role;
+
+        return res.render("user/candidatelist", {
+            title: "Candidate List",
+            candidates,
+            role
+        });
+
+    } catch (err) {
+        console.log("Delete Error:", err);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
 
-/*-------Its Voting Day?---------*/
-router.post('/vote/:candidateId', jwtAuthMiddleware,async (req, res) => {
+/*-------- Voting Logic (user vote karega, admin nahi) --------*/
+router.post('/vote/:candidateId', jwtAuthMiddleware, async (req, res) => {
     try {
-     const electiondata = await Election.findOne();
-
-  const now = new Date();
-
-  if (!electiondata) return res.send("election timing not set!");
-
-  if (now < electiondata.startTime)
-    return res.send("election has not started yet!");
-
-  if (now > electiondata.endTime)
-    return res.send("election has ended. You cannot vote now.");
-
-  // continue with vote logic
-
+        const user = await User.findById(req.user.userId);
         const candidateId = req.params.candidateId;
-        const userId = req.user.userId;
+        const election = await Election.findOne();
+        const now = new Date();
 
-        // Check if candidate exists
-        const candidate = await Candidate.findById(candidateId);
-        if (!candidate) {
-            return res.status(404).json({ message: 'Candidate not found.' });
-        }
-         // Check if user exists
-        const user = await User.findById(userId);
-        if(!user){
-            return res.status(404).json({ message: 'User not found.' });
+        // Election checks
+        if (!election) return res.send("Election timing not set!");
+        if (now < election.startTime) return res.send("Election has not started yet!");
+        if (now > election.endTime) return res.send("Election has ended!");
+
+        // No admin voting
+        if (user.role === 'admin') {
+            return res.send("Admin vote nahi de sakta.");
         }
 
-        //user can vote only once
-        if(user.isVoted){
-            return res.redirect("/thankyou");
+        // Simple already voted check  
+        if (user.isVoted === true) {
+            return res.redirect("/thankyou");   // user already voted
         }
-        //Admin cannot vote
-        if(user.role === 'admin'){
-            return res.status(403).json({ message: 'Admins are not allowed to vote.' });
-        }
-       
-       //update candidate's votes and voteCount
-       candidate.votes.push({ user: userId });  // isse user ka vote add hoga and votes array me ek naya entry banega
-       candidate.voteCount += 1;     // increment vote count
-         await candidate.save();
 
-     //update user's isVoted status
-       user.isVoted = true;// isse user ka vote dene ka status true ho jayega
-       await user.save();
+        // Vote +1
+        await Candidate.findByIdAndUpdate(candidateId, { $inc: { voteCount: 1 } });
+
+        // Mark user as voted
+        user.isVoted = true;
+        user.votedfor = candidateId;
+        await user.save();
+
         return res.redirect("/thankyou");
 
+    } catch (err) {
+        console.log("Voting error:", err);
+        res.send("Error in voting");
+    }
+});
 
-    } 
-    catch (err) {
-        console.log('Error during voting:', err);
+
+
+/*-------- Vote Counts (ye result descending order me dega) --------*/
+router.get("/vote/counts", async (req, res) => {
+    try {
+        const candidates = await Candidate.find().sort({ voteCount: "desc" });
+
+        /*-------- voteRecords array banayega --------*/
+        const voteRecords = candidates.map((c) => ({
+            party: c.party,
+            count: c.voteCount
+        }));
+
+        res.status(200).json({
+            voteRecords,
+            message: "Vote counts fetched successfully"
+        });
+
+    } catch (err) {
+        console.log('Vote Count Error:', err);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
 
-/*-----------------Vote CountS-----------------*/
+// /*-------- Set Election Time (admin election ka start & end time set karega) --------*/
+// router.post("/admin/setelection", async (req, res) => {
+//     const { startTime, endTime } = req.body;
 
-router.get("/vote/counts",  async(req,res)=>{
-    try{
-        const candidates = await Candidate.find().sort({voteCount:"desc"});// ye sabhi candidates ko voteCount ke hisab se descending order me laega
-           
-        //vote records ke sath response bhejna
-        const voteRecords = candidates.map((data)=>{
-            return {
-            party: data.party,
-           count: data.voteCount
-        }
-    });
-        res.status(200).json({voteRecords, message:"Vote counts fetched successfully"});
- }catch(err){
-    console.log('Error during fetching vote counts:', err);
-        res.status(500).json({ message: 'Internal server error' });
- }
-    
-});
-/*-----------------Set election Time-----------------*/
-router.post("/admin/setelection", async (req, res) => {
-  const { startTime, endTime } = req.body;
+//     await Election.deleteMany();   /*-------- purane election ko delete karega --------*/
+//     await Election.create({ startTime, endTime });
 
-  await Election.deleteMany(); // keep only latest
-  await Election.create({ startTime, endTime });
-
-  res.send("election time set successfully!");
-});
-
-
-/*-----------------Get All Candidates-----------------*/
-// router.get("/candidatelist", async(req,res)=>{
-//     const candidates = await Candidate.find();
-//    // console.log(candidate);
-//      res.render("user/candidatelist", { title: "Candidates", user, candidates });
+//     res.send("Election time set successfully!");
 // });
-
-/*-----------final result page after election ends----------------*/
-
 
 
 module.exports = router;

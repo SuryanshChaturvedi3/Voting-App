@@ -39,7 +39,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: [8, "Password must be at least 8 characters long"],
-      maxlength: [8, "Password cannot exceed 8 characters"],
     },
 
     resetOtp: {
@@ -60,6 +59,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // By default, a user has not voted
     },
+    votedfor: {
+        type: String,  // or ObjectId if referencing candidate
+        default: null
+    }
   },
   { timestamps: true }
 ); // Automatically adds createdAt and updatedAt fields)

@@ -4,45 +4,47 @@
 
     <div class="card shadow-lg p-4 rounded-4">
 
-        <table class="table table-bordered table-striped text-center align-middle">
-
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                    <th>Email</th>
-                    <th>Mobile</th>
-                    <th>Aadhar</th>
-                    <th>Address</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% voters.forEach((v, index) => { %>
+        <!-- Fix: Table wrapper to prevent overflow -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped text-center align-middle">
+                <thead class="table-dark">
                     <tr>
-                        <td><%= index + 1 %></td>
-                        <td><%= v.name %></td>
-                        <td><%= v.age %></td>
-                        <td><%= v.gender %></td>
-                        <td><%= v.email %></td>
-                        <td><%= v.mobile %></td>
-                        <td><%= v.aadharCard %></td>
-                        <td><%= v.address %></td>
-                        <td>
-                            <% if (v.isVoted) { %>
-                                <span class="badge bg-success">Voted</span>
-                            <% } else { %>
-                                <span class="badge bg-danger">Not Voted</span>
-                            <% } %>
-                        </td>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Aadhar</th>
+                        <th>Address</th>
+                        <th>Status</th>
                     </tr>
-                <% }) %>
-            </tbody>
+                </thead>
 
-        </table>
+                <tbody>
+                    <% voters.forEach((v, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= v.name %></td>
+                            <td><%= v.age %></td>
+                            <td><%= v.gender %></td>
+                            <td><%= v.email %></td>
+                            <td><%= v.mobile %></td>
+                            <td><%= v.aadharCard %></td>
+                            <td><%= v.address %></td>
+                            <td>
+                                <% if (v.isVoted) { %>
+                                    <span class="badge bg-success">Voted</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">Not Voted</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+
+            </table>
+        </div>
 
         <a href="/admin/dashboard" class="btn btn-outline-dark mt-3 w-100 rounded-pill">
             Back to Dashboard

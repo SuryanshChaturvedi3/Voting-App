@@ -9,6 +9,12 @@ const electionSchema = new mongoose.Schema({
       type: Date,
       required: true,
     },
+    status: {
+  type: String,
+  enum: ["not_started", "ongoing", "ended", "stopped"],
+  default: "not_started"
+}
+
 });
 
-    module.exports = mongoose.model("election", electionSchema);
+    module.exports = mongoose.model("Election", electionSchema);

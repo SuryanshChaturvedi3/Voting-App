@@ -50,7 +50,20 @@
                 <i class="bi bi-clock-history me-2"></i> Set Time
             </a>
         </div>
+        <% if (message) { %>
+  <div class="alert alert-warning text-center"><%= message %></div>
+<% } %>
+
     </div>
+
+    <form action="/admin/stop-election" method="POST">
+    <button class="btn btn-danger w-100 my-2">
+        Stop Election
+    </button>
+    
+
+
+</form>
 </div>
 
 
