@@ -13,6 +13,7 @@ async function sendOTP(mobile, otp) {
       from: process.env.TWILIO_NUMBER,  // Twilio number
       to: `+91${mobile}`
     });
+    
 
     return true;
   } catch (error) {

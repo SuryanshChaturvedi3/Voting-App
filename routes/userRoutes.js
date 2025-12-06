@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const sendOTP = require("../utils/sendotp");
+const bcrypt = require("bcrypt");
 const { generateToken, jwtAuthMiddleware } = require("../jwt");
 const electionSchema = require("../models/election");
 
@@ -49,7 +50,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { aadharCard, password } = req.body;
-
+          console.log(aadharCard,password);
     const user = await User.findOne({ aadharCard });
 
     /*---------- Invalid login credentials ----------*/
@@ -165,15 +166,18 @@ router.post("/reset-password", async (req, res) => {
   try {
     const { userId, password } = req.body;
 
-    if (!password) {
+    if (!password || password.trim() === "") {
       return res.send("Password is missing");
     }
+        const hashedPass = await bcrypt.hash(password, 10); // <-- IMPORTANT
 
     await User.findByIdAndUpdate(userId, {
-      password: password,
+      password: hashedPass,
       resetOtp: null,
       otpExpire: null,
-    });
+    },
+ { runValidators: false }// <-- IMPORTANT: minlength error yahin se solve hoga
+);
 
     console.log("password updated");
 
@@ -186,3 +190,4 @@ router.post("/reset-password", async (req, res) => {
 
 
 module.exports = router;
+
