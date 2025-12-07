@@ -13,28 +13,46 @@ const client = twilio(SID, AUTH);
 
 async function sendOTP(mobile, otp) {
   try {
+    // Validate Twilio configuration
+    if (!SID || !AUTH || !FROM) {
+      console.error("❌ Twilio not configured properly. Check .env file for TWILIO_SID, TWILIO_AUTH, and TWILIO_NUMBER");
+      return { success: false, error: "SMS service not configured" };
+    }
+
+    // Validate and format mobile number
+    if (!mobile) {
+      console.error("❌ Mobile number is missing");
+      return { success: false, error: "Mobile number is required" };
+    }
+
     const to = mobile.startsWith("+") ? mobile : `+91${mobile}`;
-    console.log("Attempting to send OTP", { to, from: FROM, otp });
+    console.log("📱 Attempting to send OTP to:", to, "| OTP:", otp);
 
     const msg = await client.messages.create({
-      body: `Your OTP for password reset is ${otp}`,
+      body: `Your OTP for password reset is ${otp}. Valid for 5 minutes.`,
       // If you use a Messaging Service, set messagingServiceSid instead of from.
       ...(FROM && FROM.startsWith("MG") ? { messagingServiceSid: FROM } : { from: FROM }),
       to,
-      statusCallback: `${process.env.APP_URL || 'http://localhost:3000'}/twilio-status`
     });
 
-    console.log("Twilio create() response:", { sid: msg.sid, status: msg.status, to: msg.to });
-    return true;
+    console.log("✅ SMS sent successfully:", { sid: msg.sid, status: msg.status, to: msg.to });
+    return { success: true, messageId: msg.sid, status: msg.status };
   } catch (error) {
     // Twilio error object often contains more fields
-    console.error("OTP Error:", {
+    console.error("❌ OTP sending failed:", {
       message: error.message,
       code: error.code,
-      more: error.more || null,
+      more: error.moreInfo || error.more || null,
       status: error.status
     });
-    return false;
+
+    // Check for common Twilio trial errors
+    if (error.code === 21608) {
+      console.error("⚠️  TWILIO TRIAL LIMITATION: The number", mobile, "is not verified.");
+      console.error("   Go to https://console.twilio.com/us1/develop/phone-numbers/manage/verified and add this number.");
+    }
+
+    return { success: false, error: error.message, code: error.code };
   }
 }
 
